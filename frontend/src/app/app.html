@@ -1,0 +1,436 @@
+<div class="app-container">
+  <!-- Top Navigation Bar -->
+  <header class="navbar">
+    <div class="brand">
+      <img src="logo-gilson.png" alt="GilsonViagens Logo" class="gilson-logo-img">
+    </div>
+
+    <div class="nav-actions">
+      <button class="btn btn-outline" (click)="dispararTodas()" [disabled]="executandoTudo()">
+        <span *ngIf="!executandoTudo()">⚡ Buscar Todas Agora</span>
+        <span *ngIf="executandoTudo()">Executando buscas...</span>
+      </button>
+
+      <button class="btn btn-primary" (click)="abrirModalCriacao()">
+        ➕ Nova Busca
+      </button>
+    </div>
+  </header>
+
+  <!-- Toast Notification -->
+  <div *ngIf="toast()" class="toast-banner" [ngClass]="'toast-' + toast()!.tipo">
+    <span>{{ toast()!.mensagem }}</span>
+    <button class="toast-close" (click)="toast.set(null)">&times;</button>
+  </div>
+
+  <!-- Dashboard Overview Cards -->
+  <section class="metrics-grid">
+    <div class="metric-card metric-green">
+      <div class="metric-icon-badge">📍</div>
+      <div class="metric-content">
+        <div class="metric-title">Destinos Monitorados</div>
+        <div class="metric-value">{{ configs().length }}</div>
+        <div class="metric-hint">trechos cadastrados</div>
+      </div>
+    </div>
+
+    <div class="metric-card metric-blue">
+      <div class="metric-icon-badge">⏰</div>
+      <div class="metric-content">
+        <div class="metric-title">Horário dos Agendamentos</div>
+        <div class="metric-value schedule-badge">Diário às {{ settings().horario_execucao }}</div>
+        <div class="metric-hint">{{ settings().ultimo_status || 'Aguardando próxima execução' }}</div>
+      </div>
+    </div>
+
+    <div class="metric-card metric-orange">
+      <div class="metric-icon-badge">📲</div>
+      <div class="metric-content">
+        <div class="metric-title">Notificações Telegram</div>
+        <div class="metric-value">
+          <span *ngIf="settings().telegram_bot_token && settings().telegram_chat_id" class="status-active">● Conectado</span>
+          <span *ngIf="!settings().telegram_bot_token || !settings().telegram_chat_id" class="status-pending">○ Não configurado</span>
+        </div>
+        <div class="metric-hint">
+          <a href="javascript:void(0)" (click)="activeTab.set('configuracoes')">Configurar bot →</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Tab Navigation -->
+  <nav class="tabs-nav">
+    <button class="tab-btn" [class.active]="activeTab() === 'buscas'" (click)="activeTab.set('buscas')">
+      📍 Destinos Monitorados ({{ configs().length }})
+    </button>
+    <button class="tab-btn" [class.active]="activeTab() === 'historico'" (click)="activeTab.set('historico'); carregarHistorico()">
+      📈 Histórico de Preços ({{ historico().length }})
+    </button>
+    <button class="tab-btn" [class.active]="activeTab() === 'configuracoes'" (click)="activeTab.set('configuracoes')">
+      ⚙️ Configurações &amp; Telegram
+    </button>
+    <button class="tab-btn" [class.active]="activeTab() === 'avancado'" (click)="abrirTabAvancado()">
+      🛠️ Avançado (Logs)
+      <span *ngIf="resumoLogs().err > 0" class="tab-error-dot">{{ resumoLogs().err }}</span>
+    </button>
+  </nav>
+
+  <!-- TAB: BUSCAS / TRECHOS -->
+  <main *ngIf="activeTab() === 'buscas'" class="tab-content">
+    <div *ngIf="loadingConfigs()" class="loading-state">
+      <div class="spinner"></div>
+      <p>Carregando monitoramentos...</p>
+    </div>
+
+    <div *ngIf="!loadingConfigs() && configs().length === 0" class="empty-state">
+      <div class="empty-icon">🛫</div>
+      <h3>Nenhum destino cadastrado</h3>
+      <p>Adicione um trecho para monitorar os preços automaticamente.</p>
+      <button class="btn btn-primary" (click)="abrirModalCriacao()">Cadastrar Primeiro Destino</button>
+    </div>
+
+    <div class="cards-grid" *ngIf="!loadingConfigs() && configs().length > 0">
+      <div *ngFor="let cfg of configs()"
+           class="flight-card"
+           [class.paused]="!cfg.ativa"
+           [class.card-hit-target]="cfg.menor_preco_recente && cfg.menor_preco_recente <= cfg.valor_alvo">
+        <div class="card-header">
+          <div class="route-badge">
+            <div class="airport-block">
+              <span class="airport-code">{{ cfg.origem }}</span>
+              <span class="airport-city-sub" *ngIf="getInfoAeroporto(cfg.origem) as orig">{{ orig.cidade }}</span>
+            </div>
+            <div class="route-connector">
+              <span class="connector-dot"></span>
+              <span class="connector-line"></span>
+              <span class="route-arrow">✈️</span>
+              <span class="connector-line"></span>
+              <span class="connector-dot"></span>
+            </div>
+            <div class="airport-block">
+              <span class="airport-code">{{ cfg.destino }}</span>
+              <span class="airport-city-sub" *ngIf="getInfoAeroporto(cfg.destino) as dest">{{ dest.cidade }}</span>
+            </div>
+          </div>
+          <div class="toggle-container">
+            <label class="switch-label">
+              <input type="checkbox" [checked]="cfg.ativa" (change)="toggleAtiva(cfg)">
+              <span class="switch-slider"></span>
+            </label>
+            <span class="switch-status">{{ cfg.ativa ? 'Ativo' : 'Pausado' }}</span>
+          </div>
+        </div>
+
+        <div class="card-body">
+          <div class="details-row">
+            <div class="detail-item" *ngIf="cfg.data_inicio && cfg.data_fim">
+              <span class="label">Período:</span>
+              <span class="value">{{ cfg.data_inicio | date:'dd/MM' }} a {{ cfg.data_fim | date:'dd/MM/yyyy' }}</span>
+            </div>
+            <div class="detail-item" *ngIf="!cfg.data_inicio">
+              <span class="label">Mês de Foco:</span>
+              <span class="value">{{ getNomeMes(cfg.mes_foco) }}</span>
+            </div>
+            <div class="detail-item">
+              <span class="label">Duração:</span>
+              <span class="value">{{ cfg.duracao_dias }} dias</span>
+            </div>
+          </div>
+
+          <div class="flight-type-row">
+            <span *ngIf="cfg.apenas_direto" class="type-pill direct">✈️ Voo Direto (Sem escalas)</span>
+            <span *ngIf="!cfg.apenas_direto" class="type-pill any">🔄 Com ou sem escalas</span>
+            <span class="type-pill any">⏰ {{ cfg.horarios_execucao || '09:00' }}</span>
+            <span *ngIf="cfg.agendar_no_windows && cfg.ativa"
+                  class="type-pill direct"
+                  title="Roda automaticamente pelo Agendador do Windows mesmo sem o servidor aberto">
+              🪟 Windows Offline
+            </span>
+          </div>
+
+          <div class="price-box">
+            <div class="price-col">
+              <span class="price-label">Preço Alvo</span>
+              <span class="price-value target">R$ {{ cfg.valor_alvo | number:'1.2-2' }}</span>
+            </div>
+            <div class="price-divider"></div>
+            <div class="price-col">
+              <span class="price-label">Menor Capturado</span>
+              <span *ngIf="cfg.menor_preco_recente"
+                    class="price-value current"
+                    [class.hit-target]="cfg.menor_preco_recente <= cfg.valor_alvo">
+                R$ {{ cfg.menor_preco_recente | number:'1.2-2' }}
+              </span>
+              <span *ngIf="!cfg.menor_preco_recente" class="price-value na">Aguardando busca</span>
+            </div>
+          </div>
+
+          <div *ngIf="cfg.menor_preco_recente && cfg.menor_preco_recente <= cfg.valor_alvo" class="target-alert-pill">
+            🎯 Preço alvo atingido!
+          </div>
+
+          <div *ngIf="cfg.ultima_coleta" class="last-collected">
+            Última checagem: {{ cfg.ultima_coleta | date:'dd/MM/yyyy HH:mm' }}
+          </div>
+        </div>
+
+        <div class="card-footer">
+          <button class="btn btn-sm btn-primary"
+                  [disabled]="buscandoId() === cfg.id"
+                  (click)="buscarAgora(cfg)">
+            <span *ngIf="buscandoId() === cfg.id" class="btn-spinner"></span>
+            <span *ngIf="buscandoId() !== cfg.id">🔍 Buscar Agora</span>
+          </button>
+
+          <button class="btn btn-sm btn-outline"
+                  title="Editar configurações deste trecho"
+                  (click)="abrirModalEdicao(cfg)">
+            ✏️ Editar
+          </button>
+
+          <a *ngIf="cfg.link_recente"
+             [href]="cfg.link_recente"
+             target="_blank"
+             rel="noopener"
+             class="btn btn-sm btn-outline">
+            Ver Voo 🔗
+          </a>
+
+          <button class="btn btn-sm btn-danger-icon"
+                  title="Excluir monitoramento"
+                  (click)="excluirConfig(cfg)">
+            🗑️
+          </button>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- TAB: HISTÓRICO -->
+  <main *ngIf="activeTab() === 'historico'" class="tab-content">
+    <div class="historico-header">
+      <h3>Histórico de Preços Capturados</h3>
+      <div class="filter-controls">
+        <label>Filtrar por Trecho:</label>
+        <select [ngModel]="filtroBuscaHistorico()" (ngModelChange)="filtrarHistoricoPor($event)">
+          <option [ngValue]="null">Todos os trechos</option>
+          <option *ngFor="let cfg of configs()" [ngValue]="cfg.id">
+            {{ cfg.origem }} ➔ {{ cfg.destino }} ({{ cfg.data_inicio ? (cfg.data_inicio | date:'dd/MM') + ' a ' + (cfg.data_fim | date:'dd/MM') : getNomeMes(cfg.mes_foco) }})
+          </option>
+        </select>
+      </div>
+    </div>
+
+    <div *ngIf="loadingHistorico()" class="loading-state">
+      <div class="spinner"></div>
+      <p>Carregando histórico...</p>
+    </div>
+
+    <div *ngIf="!loadingHistorico() && historico().length === 0" class="empty-state">
+      <p>Nenhum preço registrado ainda. Execute uma busca manual ("Buscar Agora") ou aguarde o agendamento.</p>
+    </div>
+
+    <div *ngIf="!loadingHistorico() && historicoAgrupado().length > 0" class="historico-groups-container">
+      <div *ngFor="let grupo of historicoAgrupado()" class="historico-group-card">
+        <div class="historico-group-header" (click)="toggleGrupoHistorico(grupo.id_busca)">
+          <div class="group-route-info">
+            <div class="group-route-title">
+              <span class="group-iata">{{ grupo.origem }}</span>
+              <small *ngIf="grupo.cidadeOrigem" class="group-city">({{ grupo.cidadeOrigem }})</small>
+              <span class="group-arrow">✈️</span>
+              <span class="group-iata">{{ grupo.destino }}</span>
+              <small *ngIf="grupo.cidadeDestino" class="group-city">({{ grupo.cidadeDestino }})</small>
+            </div>
+
+            <div class="group-meta-badges" *ngIf="grupo.config as cfg">
+              <span class="meta-badge" *ngIf="cfg.data_inicio && cfg.data_fim">
+                📅 {{ cfg.data_inicio | date:'dd/MM' }} a {{ cfg.data_fim | date:'dd/MM/yyyy' }}
+              </span>
+              <span class="meta-badge" *ngIf="!cfg.data_inicio">
+                🗓️ {{ getNomeMes(cfg.mes_foco) }}
+              </span>
+              <span class="meta-badge">⏱️ {{ cfg.duracao_dias }} dias</span>
+              <span *ngIf="cfg.apenas_direto" class="type-pill direct">✈️ Voo Direto</span>
+            </div>
+          </div>
+
+          <div class="group-stats-right">
+            <div class="group-stat-box" *ngIf="grupo.config as cfg">
+              <span class="group-stat-label">Alvo</span>
+              <span class="group-stat-val target">R$ {{ cfg.valor_alvo | number:'1.2-2' }}</span>
+            </div>
+
+            <div class="group-stat-box">
+              <span class="group-stat-label">Menor Preço</span>
+              <span class="group-stat-val best"
+                    [class.hit]="grupo.config && grupo.menorValor <= grupo.config.valor_alvo">
+                R$ {{ grupo.menorValor | number:'1.2-2' }}
+              </span>
+            </div>
+
+            <span class="group-count-pill">{{ grupo.itens.length }} {{ grupo.itens.length === 1 ? 'registro' : 'registros' }}</span>
+            <span class="group-chevron">{{ gruposRecolhidos()[grupo.id_busca] ? '▶' : '▼' }}</span>
+          </div>
+        </div>
+
+        <div *ngIf="!gruposRecolhidos()[grupo.id_busca]" class="table-responsive group-table-wrapper">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Data Coleta</th>
+                <th>Data Ida</th>
+                <th>Data Volta</th>
+                <th>Menor Valor</th>
+                <th>Ação</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let item of grupo.itens">
+                <td>{{ item.data_coleta | date:'dd/MM/yyyy HH:mm' }}</td>
+                <td><strong>{{ item.data_ida | date:'dd/MM/yyyy' }}</strong></td>
+                <td><strong>{{ item.data_volta | date:'dd/MM/yyyy' }}</strong></td>
+                <td>
+                  <span class="price-highlight"
+                        [class.best-row-price]="item.valor === grupo.menorValor">
+                    R$ {{ item.valor | number:'1.2-2' }}
+                  </span>
+                  <span *ngIf="item.valor === grupo.menorValor" class="best-badge">★ Menor</span>
+                </td>
+                <td>
+                  <a [href]="item.link_direto" target="_blank" rel="noopener" class="link-external">
+                    Abrir no Google Flights ↗
+                  </a>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- TAB: CONFIGURAÇÕES -->
+  <main *ngIf="activeTab() === 'configuracoes'" class="tab-content">
+    <div class="settings-grid-layout">
+      <div class="settings-card">
+        <h2>Configurações do Robô &amp; Notificações</h2>
+        <p class="section-desc">
+          Configure as credenciais do seu Bot do Telegram para receber alertas automáticos quando o menor preço de uma passagem for igual ou inferior ao seu valor alvo.
+        </p>
+
+        <form (ngSubmit)="salvarSettings()" class="settings-form">
+          <div class="form-group">
+            <label>Telegram Bot Token:</label>
+            <input type="text"
+                   [ngModel]="settings().telegram_bot_token"
+                   (ngModelChange)="patchSettings({ telegram_bot_token: $event })"
+                   name="bot_token"
+                   placeholder="Ex: 123456789:ABCdefGhIJKlmNoPQRsTUVwxyZ"
+                   class="form-control">
+            <small class="form-help">Criado com o @BotFather no Telegram.</small>
+          </div>
+
+          <div class="form-group">
+            <label>Telegram Chat ID:</label>
+            <input type="text"
+                   [ngModel]="settings().telegram_chat_id"
+                   (ngModelChange)="patchSettings({ telegram_chat_id: $event })"
+                   name="chat_id"
+                   placeholder="Ex: 987654321 ou @seucanal"
+                   class="form-control">
+            <small class="form-help">Seu ID de usuário ou canal (obtido com @userinfobot no Telegram).</small>
+          </div>
+
+          <div class="form-group">
+            <label>Horário Padrão / Fallback Global (HH:MM):</label>
+            <input type="time"
+                   [ngModel]="settings().horario_execucao"
+                   (ngModelChange)="patchSettings({ horario_execucao: $event })"
+                   name="horario_execucao"
+                   class="form-control"
+                   style="max-width: 180px;">
+            <small class="form-help">Cada busca ativa também possui seus próprios horários individuais configuráveis no botão "✏️ Editar".</small>
+          </div>
+
+          <div class="settings-actions">
+            <button type="submit" class="btn btn-primary">
+              💾 Salvar Configurações
+            </button>
+
+            <button type="button"
+                    class="btn btn-outline"
+                    (click)="testarTelegram()"
+                    [disabled]="testandoTelegram() || !settings().telegram_bot_token || !settings().telegram_chat_id">
+              <span *ngIf="!testandoTelegram()">📲 Testar Notificação Telegram</span>
+              <span *ngIf="testandoTelegram()">Enviando teste...</span>
+            </button>
+          </div>
+        </form>
+      </div>
+
+      <!-- Card: Agendador Independente do Windows (Sem Backend Rodando) -->
+      <div class="settings-card">
+        <h2>🪟 Agendador do Windows (Sem Servidor)</h2>
+        <p class="section-desc">
+          As buscas marcadas com <strong>"Rodar no Agendador do Windows"</strong> são registradas no <code>schtasks.exe</code> do Windows e executam em segundo plano nos horários de cada busca <strong>mesmo com o servidor fechado</strong>.
+        </p>
+
+        <div class="detail-item" style="margin-bottom: 12px;">
+          <span class="label">Tarefas ativas no Windows:</span>
+          <span class="value" style="color: #4ade80;">
+            {{ windowsScheduler().total_tarefas }} agendamento(s)
+          </span>
+        </div>
+
+        <div *ngIf="windowsScheduler().tarefas.length > 0" class="win-task-list">
+          <div *ngFor="let t of windowsScheduler().tarefas" class="win-task-item">
+            <span class="win-task-name">{{ t.task_name }}</span>
+            <span>Próximo: <strong>{{ t.proximo_disparo }}</strong> ({{ t.status }})</span>
+          </div>
+        </div>
+
+        <div *ngIf="windowsScheduler().comando_standalone" style="margin-top: 10px;">
+          <small class="form-help">Comando standalone executado pelo Windows:</small>
+          <div class="win-cmd-box">{{ windowsScheduler().comando_standalone }}</div>
+        </div>
+
+        <div class="settings-actions">
+          <button type="button"
+                  class="btn btn-primary"
+                  [disabled]="sincronizandoWindows()"
+                  (click)="sincronizarAgendadorWindows()">
+            {{ sincronizandoWindows() ? 'Sincronizando...' : '🔄 Sincronizar no Windows Agora' }}
+          </button>
+
+          <button type="button"
+                  class="btn btn-danger-outline"
+                  [disabled]="windowsScheduler().total_tarefas === 0"
+                  (click)="limparAgendadorWindows()">
+            🗑️ Remover do Windows
+          </button>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- TAB: AVANÇADO (LOGS DO WEBSCRAPER) -->
+  <main *ngIf="activeTab() === 'avancado'" class="tab-content">
+    <app-scraper-log-console
+      [logs]="logs()"
+      [resumoLogs]="resumoLogs()"
+      [carregando]="loadingLogs()"
+      [raspagemEmAndamento]="buscandoId() !== null || executandoTudo()"
+      [(autoRefreshLogs)]="autoRefreshLogs"
+      (solicitarAtualizacao)="carregarLogs()"
+      (solicitarLimpeza)="limparLogs()" />
+  </main>
+
+  <!-- MODAL: NOVA BUSCA / EDIÇÃO -->
+  <app-flight-modal
+    *ngIf="showModalNovaBusca()"
+    [editandoConfigId]="editandoConfigId()"
+    [(novaBusca)]="novaBusca"
+    [(tipoData)]="tipoData"
+    (cancelar)="showModalNovaBusca.set(false)"
+    (confirmarSalvar)="salvarNovaBusca()" />
+</div>

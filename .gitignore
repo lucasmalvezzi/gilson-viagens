@@ -1,0 +1,27 @@
+# Ambientes Virtuais Python
+venv/
+.venv/
+env/
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+
+# Banco de Dados Local e Logs (contêm tokens/histórico local)
+flights.db
+flights.db-shm
+flights.db-wal
+scraper.log
+*.log
+
+# Dependências e Cache do Frontend Angular
+frontend/node_modules/
+frontend/.angular/
+frontend/dist/
+
+# Arquivos temporários e de Sistema Operacional
+.DS_Store
+Thumbs.db
+*.tmp
+.env
+subir_git.bat

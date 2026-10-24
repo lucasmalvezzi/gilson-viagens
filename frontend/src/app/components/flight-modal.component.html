@@ -1,0 +1,309 @@
+<div class="modal-backdrop" (click)="fecharModal()">
+  <div class="modal-dialog" (click)="$event.stopPropagation(); fecharDropdowns()">
+    <div class="modal-header">
+      <h3>{{ editandoConfigId() ? '✏️ Editar Monitoramento de Voo' : 'Cadastrar Monitoramento de Voo' }}</h3>
+      <button class="modal-close" (click)="fecharModal()">&times;</button>
+    </div>
+
+    <div class="modal-body">
+      <!-- Origem e Destino com Autocomplete Inteligente -->
+      <div class="airport-selector-row">
+        <!-- ORIGEM -->
+        <div class="form-group col-half airport-autocomplete-wrapper" (click)="$event.stopPropagation()">
+          <label>Origem (Cidade ou IATA):</label>
+          <div class="input-with-icon">
+            <span class="input-icon">🛫</span>
+            <input type="text"
+                   [ngModel]="novaBusca().origem"
+                   (ngModelChange)="atualizarCampo({ origem: $event }); dropdownOrigemAberto.set(true)"
+                   (focus)="dropdownOrigemAberto.set(true); dropdownDestinoAberto.set(false)"
+                   placeholder="Digite cidade ou sigla (ex: Campinas, GRU)"
+                   autocomplete="off"
+                   class="form-control input-airport">
+            <button *ngIf="novaBusca().origem"
+                    type="button"
+                    class="clear-input-btn"
+                    title="Limpar"
+                    (click)="atualizarCampo({ origem: '' }); dropdownOrigemAberto.set(true)">
+              &times;
+            </button>
+          </div>
+
+          <div *ngIf="infoOrigemSelecionada() as info" class="airport-selected-hint">
+            📍 <strong>{{ info.iata }}</strong> — {{ info.cidade }} ({{ info.uf }}) · {{ info.nome }}
+          </div>
+
+          <div *ngIf="dropdownOrigemAberto()" class="airport-dropdown">
+            <div class="dropdown-header-hint">
+              {{ novaBusca().origem ? 'Aeroportos encontrados:' : 'Principais aeroportos (digite para filtrar):' }}
+            </div>
+            <div *ngFor="let aero of sugestoesOrigem()"
+                 class="airport-option"
+                 [class.selected]="novaBusca().origem?.toUpperCase() === aero.iata"
+                 (click)="selecionarAeroporto('origem', aero)">
+              <div class="airport-option-main">
+                <span class="airport-iata-pill">{{ aero.iata }}</span>
+                <span class="airport-city-name">{{ aero.cidade }} <small>({{ aero.uf }})</small></span>
+              </div>
+              <span class="airport-sub-name">{{ aero.nome }}</span>
+            </div>
+            <div *ngIf="sugestoesOrigem().length === 0" class="airport-empty-option">
+              Usar código personalizado: <strong>{{ novaBusca().origem?.toUpperCase() }}</strong>
+            </div>
+          </div>
+        </div>
+
+        <!-- BOTÃO INVERTER -->
+        <div class="swap-btn-container">
+          <button type="button"
+                  class="btn-swap-airports"
+                  title="Inverter Origem e Destino"
+                  (click)="inverterOrigemDestino()">
+            ⇄
+          </button>
+        </div>
+
+        <!-- DESTINO -->
+        <div class="form-group col-half airport-autocomplete-wrapper" (click)="$event.stopPropagation()">
+          <label>Destino (Cidade ou IATA):</label>
+          <div class="input-with-icon">
+            <span class="input-icon">🛬</span>
+            <input type="text"
+                   [ngModel]="novaBusca().destino"
+                   (ngModelChange)="atualizarCampo({ destino: $event }); dropdownDestinoAberto.set(true)"
+                   (focus)="dropdownDestinoAberto.set(true); dropdownOrigemAberto.set(false)"
+                   placeholder="Digite cidade ou sigla (ex: Recife, JPA)"
+                   autocomplete="off"
+                   class="form-control input-airport">
+            <button *ngIf="novaBusca().destino"
+                    type="button"
+                    class="clear-input-btn"
+                    title="Limpar"
+                    (click)="atualizarCampo({ destino: '' }); dropdownDestinoAberto.set(true)">
+              &times;
+            </button>
+          </div>
+
+          <div *ngIf="infoDestinoSelecionado() as info" class="airport-selected-hint">
+            📍 <strong>{{ info.iata }}</strong> — {{ info.cidade }} ({{ info.uf }}) · {{ info.nome }}
+          </div>
+
+          <div *ngIf="dropdownDestinoAberto()" class="airport-dropdown">
+            <div class="dropdown-header-hint">
+              {{ novaBusca().destino ? 'Aeroportos encontrados:' : 'Principais aeroportos (digite para filtrar):' }}
+            </div>
+            <div *ngFor="let aero of sugestoesDestino()"
+                 class="airport-option"
+                 [class.selected]="novaBusca().destino?.toUpperCase() === aero.iata"
+                 (click)="selecionarAeroporto('destino', aero)">
+              <div class="airport-option-main">
+                <span class="airport-iata-pill">{{ aero.iata }}</span>
+                <span class="airport-city-name">{{ aero.cidade }} <small>({{ aero.uf }})</small></span>
+              </div>
+              <span class="airport-sub-name">{{ aero.nome }}</span>
+            </div>
+            <div *ngIf="sugestoesDestino().length === 0" class="airport-empty-option">
+              Usar código personalizado: <strong>{{ novaBusca().destino?.toUpperCase() }}</strong>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Seletor do Tipo de Data: Intervalo vs Mês -->
+      <div class="date-mode-selector">
+        <label class="mode-label">Tipo de Seleção de Datas:</label>
+        <div class="mode-buttons">
+          <button type="button"
+                  class="mode-btn"
+                  [class.active]="tipoData() === 'intervalo'"
+                  (click)="tipoData.set('intervalo')">
+            📅 Intervalo Personalizado
+          </button>
+          <button type="button"
+                  class="mode-btn"
+                  [class.active]="tipoData() === 'mes'"
+                  (click)="tipoData.set('mes')">
+            🗓️ Por Mês de Foco
+          </button>
+        </div>
+      </div>
+
+      <!-- Opção 1: Intervalo Personalizado -->
+      <div *ngIf="tipoData() === 'intervalo'" class="custom-range-box">
+        <div class="form-row">
+          <div class="form-group col-half">
+            <label>Data Início (Partida a partir de):</label>
+            <input type="date"
+                   [ngModel]="novaBusca().data_inicio"
+                   (ngModelChange)="atualizarCampo({ data_inicio: $event })"
+                   class="form-control">
+          </div>
+
+          <div class="form-group col-half">
+            <label>Data Fim (Partida até):</label>
+            <input type="date"
+                   [ngModel]="novaBusca().data_fim"
+                   (ngModelChange)="atualizarCampo({ data_fim: $event })"
+                   class="form-control">
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group col-half">
+            <label>Frequência de Busca no Período:</label>
+            <select [ngModel]="novaBusca().estrategia_busca"
+                    (ngModelChange)="atualizarCampo({ estrategia_busca: $event })"
+                    class="form-control">
+              <option value="passo">Intervalo regular (Recomendado)</option>
+              <option value="todos">Todos os dias (Diário)</option>
+              <option value="fins_de_semana">Apenas Fins de Semana (Sex/Sáb)</option>
+            </select>
+          </div>
+
+          <div class="form-group col-half" *ngIf="novaBusca().estrategia_busca === 'passo'">
+            <label>A cada quantos dias:</label>
+            <select [ngModel]="novaBusca().passo_dias"
+                    (ngModelChange)="atualizarCampo({ passo_dias: +$event })"
+                    class="form-control">
+              <option [ngValue]="2">A cada 2 dias</option>
+              <option [ngValue]="3">A cada 3 dias (Equilibrado)</option>
+              <option [ngValue]="4">A cada 4 dias</option>
+              <option [ngValue]="5">A cada 5 dias</option>
+              <option [ngValue]="7">A cada 7 dias (Semanal)</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <!-- Opção 2: Por Mês de Foco -->
+      <div *ngIf="tipoData() === 'mes'" class="form-row">
+        <div class="form-group col-full">
+          <label>Mês de Foco Desejado:</label>
+          <select [ngModel]="novaBusca().mes_foco"
+                  (ngModelChange)="atualizarCampo({ mes_foco: +$event })"
+                  class="form-control">
+            <option *ngFor="let m of meses" [ngValue]="m.valor">{{ m.nome }}</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Duração da Viagem e Preço Alvo -->
+      <div class="form-row">
+        <div class="form-group col-half">
+          <label>Duração da Viagem (Dias):</label>
+          <input type="number"
+                 [ngModel]="novaBusca().duracao_dias"
+                 (ngModelChange)="atualizarCampo({ duracao_dias: +$event })"
+                 min="1"
+                 max="60"
+                 class="form-control">
+        </div>
+
+        <div class="form-group col-half">
+          <label>Preço Alvo Desejado (R$):</label>
+          <input type="number"
+                 [ngModel]="novaBusca().valor_alvo"
+                 (ngModelChange)="atualizarCampo({ valor_alvo: +$event })"
+                 placeholder="Ex: 500.00"
+                 min="10"
+                 step="10"
+                 class="form-control">
+        </div>
+      </div>
+
+      <!-- Estimativa em Tempo Real -->
+      <div class="estimativa-card" [class.warning]="estimativa().total > 15">
+        <div class="estimativa-header">
+          <span class="estimativa-icon">⚡</span>
+          <strong>Estimativa de Requisições ao Google Flights</strong>
+        </div>
+        <div class="estimativa-body">
+          <div class="estimativa-main">
+            <span class="stat-number">{{ estimativa().total }}</span>
+            <span class="stat-text">pesquisas / chamadas programadas</span>
+          </div>
+          <div class="estimativa-time">
+            ⏱️ Tempo de execução previsto: <strong>~{{ estimativa().tempo }}s</strong>
+          </div>
+        </div>
+
+        <div *ngIf="estimativa().amostras.length > 0" class="estimativa-samples">
+          <span class="samples-title">Amostras de períodos que serão checados:</span>
+          <div class="samples-list">
+            <span class="sample-tag" *ngFor="let a of estimativa().amostras">{{ a }}</span>
+            <span *ngIf="estimativa().total > estimativa().amostras.length" class="sample-tag more">
+              +{{ estimativa().total - estimativa().amostras.length }} datas
+            </span>
+          </div>
+        </div>
+
+        <div *ngIf="estimativa().total > 15" class="estimativa-alert">
+          ⚠️ <strong>Atenção:</strong> Mais de 15 chamadas numa única execução podem tornar a busca lenta e aumentar a chance de bloqueio temporário do robô pelo Google Flights. Recomendamos escolher um intervalo menor ou aumentar o passo de dias (ex: a cada 3 ou 5 dias).
+        </div>
+      </div>
+
+      <!-- Horários Individuais da Busca & Agendador Offline do Windows -->
+      <div class="custom-range-box schedule-per-search-box">
+        <label class="mode-label">⏰ Horários de Execução desta Busca:</label>
+        <div class="schedule-chips-row">
+          <span *ngFor="let h of listaHorarios()" class="schedule-time-chip">
+            🕒 {{ h }}
+            <button *ngIf="listaHorarios().length > 1"
+                    type="button"
+                    class="chip-remove-btn"
+                    title="Remover horário"
+                    (click)="removerHorarioBusca(h)">
+              &times;
+            </button>
+          </span>
+        </div>
+
+        <div class="schedule-add-row">
+          <input type="time"
+                 [ngModel]="novoHorarioInput()"
+                 (ngModelChange)="novoHorarioInput.set($event)"
+                 class="form-control schedule-time-input">
+          <button type="button"
+                  class="btn btn-sm btn-outline"
+                  (click)="adicionarHorarioBusca()">
+            ➕ Adicionar Horário
+          </button>
+        </div>
+        <small class="form-help">
+          Configure um ou mais horários diários exclusivos para este trecho (ex: 09:00 e 18:00).
+        </small>
+      </div>
+
+      <!-- Opção: Apenas Voos Diretos -->
+      <div class="form-group checkbox-group" style="margin-top: 14px;">
+        <label class="custom-checkbox-label">
+          <input type="checkbox"
+                 [ngModel]="novaBusca().apenas_direto"
+                 (ngModelChange)="atualizarCampo({ apenas_direto: $event })">
+          <span class="checkbox-text">
+            <strong>✈️ Apenas voos diretos</strong> (ignorar voos com escalas ou conexões)
+          </span>
+        </label>
+      </div>
+
+      <!-- Opção: Agendar no Windows (Sem Backend Rodando) -->
+      <div class="form-group checkbox-group" style="margin-top: 10px;">
+        <label class="custom-checkbox-label">
+          <input type="checkbox"
+                 [ngModel]="novaBusca().agendar_no_windows"
+                 (ngModelChange)="atualizarCampo({ agendar_no_windows: $event })">
+          <span class="checkbox-text">
+            <strong>🪟 Rodar no Agendador do Windows</strong> (executa nos horários acima mesmo com o servidor fechado)
+          </span>
+        </label>
+      </div>
+    </div>
+
+    <div class="modal-footer">
+      <button class="btn btn-outline" (click)="fecharModal()">Cancelar</button>
+      <button class="btn btn-primary" (click)="confirmarSalvar.emit()">
+        {{ editandoConfigId() ? '💾 Salvar Alterações' : 'Cadastrar e Monitorar' }}
+      </button>
+    </div>
+  </div>
+</div>

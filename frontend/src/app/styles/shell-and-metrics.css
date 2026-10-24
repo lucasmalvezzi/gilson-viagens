@@ -1,0 +1,346 @@
+.app-container {
+  max-width: 1180px;
+  margin: 0 auto;
+  padding: 20px 24px 60px 24px;
+}
+
+/* ─── Top Navbar (GilsonViagens Dark Identity) ──────────────────────────── */
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #0d1421;
+  padding: 14px 26px;
+  border-radius: 22px;
+  border: 1px solid #243554;
+  box-shadow:
+    0 14px 32px -8px rgba(0, 0, 0, 0.55),
+    0 0 0 1px rgba(56, 182, 255, 0.08);
+  margin-bottom: 24px;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  flex-wrap: wrap;
+}
+
+.gilson-logo-img {
+  height: 76px;
+  width: auto;
+  object-fit: contain;
+  display: block;
+  border-radius: 12px;
+  transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.gilson-logo-img:hover {
+  transform: scale(1.04) rotate(-1deg);
+}
+
+.nav-actions {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
+/* ─── Buttons (Divertidos e Amigáveis) ──────────────────────────────────── */
+.btn {
+  padding: 11px 20px;
+  border-radius: 14px;
+  font-family: 'Fredoka', 'Plus Jakarta Sans', sans-serif;
+  font-weight: 600;
+  font-size: 14.5px;
+  letter-spacing: 0.01em;
+  cursor: pointer;
+  border: 1px solid transparent;
+  transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.btn:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+  transform: none !important;
+}
+
+.btn-primary {
+  background-color: #4ade80;
+  color: #0b111e;
+  font-weight: 700;
+  box-shadow: 0 6px 18px -3px rgba(74, 222, 128, 0.35);
+}
+
+.btn-primary:hover:not(:disabled) {
+  background-color: #86efac;
+  transform: translateY(-2px);
+  box-shadow: 0 10px 24px -3px rgba(74, 222, 128, 0.5);
+  text-decoration: none;
+  color: #0b111e;
+}
+
+.btn-outline {
+  background: #243756;
+  border-color: #3d5a87;
+  color: #f8fafc;
+}
+
+.btn-outline:hover:not(:disabled) {
+  background: #2d4469;
+  border-color: #4ade80;
+  color: #4ade80;
+  transform: translateY(-1px);
+  text-decoration: none;
+}
+
+.btn-sm {
+  padding: 8px 12px;
+  font-size: 12.5px;
+  border-radius: 10px;
+}
+
+.btn-danger-icon {
+  background: rgba(244, 63, 94, 0.18);
+  color: #fda4af;
+  border: 1px solid rgba(244, 63, 94, 0.4);
+  padding: 8px 10px;
+}
+
+.btn-danger-icon:hover {
+  background: rgba(244, 63, 94, 0.24);
+  border-color: #f43f5e;
+  transform: translateY(-1px);
+}
+
+.btn-danger-outline {
+  background: rgba(244, 63, 94, 0.12);
+  color: #fda4af;
+  border: 1px solid rgba(244, 63, 94, 0.3);
+}
+
+.btn-danger-outline:hover:not(:disabled) {
+  background: rgba(244, 63, 94, 0.24);
+}
+
+/* ─── Toast Banner ──────────────────────────────────────────────────────── */
+.toast-banner {
+  padding: 14px 20px;
+  border-radius: 14px;
+  margin-bottom: 22px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 14px;
+  font-weight: 600;
+  animation: slideDown 0.25s ease;
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.45);
+}
+
+.toast-info {
+  background: rgba(56, 182, 255, 0.16);
+  color: #7dd3fc;
+  border: 1px solid rgba(56, 182, 255, 0.4);
+}
+
+.toast-success {
+  background: rgba(101, 196, 102, 0.18);
+  color: #86efac;
+  border: 1px solid rgba(101, 196, 102, 0.45);
+}
+
+.toast-error {
+  background: rgba(244, 63, 94, 0.18);
+  color: #fda4af;
+  border: 1px solid rgba(244, 63, 94, 0.45);
+}
+
+.toast-close {
+  background: none;
+  border: none;
+  font-size: 20px;
+  cursor: pointer;
+  color: inherit;
+  opacity: 0.8;
+}
+
+/* ─── Metrics Grid (KPI Cards) ──────────────────────────────────────────── */
+.metrics-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(290px, 1fr));
+  gap: 18px;
+  margin-bottom: 26px;
+}
+
+.metric-card {
+  background: #1a2842;
+  padding: 20px 22px;
+  border-radius: 18px;
+  border: 1px solid #354d75;
+  box-shadow: 0 8px 20px -6px rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  transition: transform 0.2s ease, border-color 0.2s ease;
+}
+
+.metric-card:hover {
+  transform: translateY(-2px);
+}
+
+.metric-green:hover,
+.metric-blue:hover,
+.metric-orange:hover {
+  border-color: #4ade80;
+}
+
+.metric-icon-badge {
+  width: 52px;
+  height: 52px;
+  border-radius: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 25px;
+  flex-shrink: 0;
+  background: rgba(74, 222, 128, 0.14);
+  border: 1px solid rgba(74, 222, 128, 0.32);
+}
+
+.metric-content {
+  flex: 1;
+  min-width: 0;
+}
+
+.metric-title {
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: #94a3b8;
+  letter-spacing: 0.05em;
+  margin-bottom: 4px;
+}
+
+.metric-value {
+  font-family: 'Fredoka', sans-serif;
+  font-size: 26px;
+  font-weight: 700;
+  color: #f8fafc;
+  margin-bottom: 2px;
+}
+
+.schedule-badge {
+  font-size: 17px;
+  color: #4ade80;
+  background: rgba(74, 222, 128, 0.14);
+  border: 1px solid rgba(74, 222, 128, 0.32);
+  display: inline-block;
+  padding: 3px 12px;
+  border-radius: 10px;
+}
+
+.metric-hint {
+  font-size: 12.5px;
+  color: #8b9bb4;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.status-active {
+  color: #4ade80;
+  font-size: 17px;
+}
+
+.status-pending {
+  color: #94a3b8;
+  font-size: 17px;
+}
+
+/* ─── Tabs Navigation ───────────────────────────────────────────────────── */
+.tabs-nav {
+  display: flex;
+  gap: 10px;
+  background: #111a2c;
+  padding: 7px;
+  border-radius: 16px;
+  border: 1px solid #223250;
+  margin-bottom: 26px;
+  flex-wrap: wrap;
+}
+
+.tab-btn {
+  padding: 11px 20px;
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: 12px;
+  font-family: 'Fredoka', 'Plus Jakarta Sans', sans-serif;
+  font-size: 14.5px;
+  font-weight: 600;
+  color: #94a3b8;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.tab-btn:hover {
+  color: #4ade80;
+  background: rgba(74, 222, 128, 0.06);
+}
+
+.tab-btn.active {
+  color: #0b111e;
+  background-color: #4ade80;
+  border-color: #4ade80;
+  font-weight: 700;
+  box-shadow: 0 4px 14px -3px rgba(74, 222, 128, 0.35);
+}
+
+/* ─── Keyframe Animations & Responsive ──────────────────────────────────── */
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (max-width: 768px) {
+  .navbar {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .nav-actions {
+    width: 100%;
+    justify-content: stretch;
+  }
+
+  .nav-actions .btn {
+    flex: 1;
+  }
+
+  .form-row,
+  .airport-selector-row {
+    flex-direction: column;
+  }
+
+  .swap-btn-container {
+    padding-top: 0;
+    align-self: center;
+  }
+}

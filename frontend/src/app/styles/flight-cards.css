@@ -1,0 +1,365 @@
+/* ─── Flight Cards Grid (Boarding Pass Style) ───────────────────────────── */
+.cards-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(345px, 1fr));
+  gap: 20px;
+}
+
+.flight-card {
+  background: #1a2842;
+  border-radius: 20px;
+  border: 1px solid #354d75;
+  box-shadow: 0 12px 28px -6px rgba(0, 0, 0, 0.55);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  transition: transform 0.22s ease, border-color 0.22s ease, box-shadow 0.22s ease;
+  overflow: hidden;
+  position: relative;
+}
+
+.flight-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 5px;
+  background-color: #4ade80;
+}
+
+.flight-card:hover {
+  transform: translateY(-4px);
+  border-color: #4ade80;
+  box-shadow: 0 16px 32px -6px rgba(0, 0, 0, 0.65);
+}
+
+.flight-card.card-hit-target {
+  border-color: #4ade80;
+  box-shadow: 0 10px 28px -5px rgba(74, 222, 128, 0.28);
+}
+
+.flight-card.paused {
+  border-color: #2e4366;
+}
+
+.flight-card.paused::before {
+  background-color: #64748b;
+}
+
+.card-header {
+  padding: 20px 20px 16px 20px;
+  border-bottom: 1px dashed #354d75;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+}
+
+.route-badge {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex: 1;
+}
+
+.airport-block {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  line-height: 1.1;
+}
+
+.airport-code {
+  font-family: 'Fredoka', sans-serif;
+  font-size: 22px;
+  font-weight: 700;
+  color: #ffffff;
+  background: #243756;
+  border: 1px solid #415e8c;
+  padding: 6px 14px;
+  border-radius: 12px;
+  letter-spacing: 0.04em;
+}
+
+.airport-city-sub {
+  font-size: 12px;
+  font-weight: 700;
+  color: #4ade80;
+  margin-top: 5px;
+  text-align: center;
+}
+
+.route-connector {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  flex: 1;
+  max-width: 75px;
+}
+
+.connector-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #4ade80;
+}
+
+.connector-line {
+  flex: 1;
+  height: 2px;
+  border-top: 2px dotted #5271a3;
+}
+
+.route-arrow {
+  font-size: 17px;
+}
+
+/* Toggle Switch */
+.toggle-container {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 4px;
+}
+
+.switch-label {
+  position: relative;
+  display: inline-block;
+  width: 44px;
+  height: 24px;
+}
+
+.switch-label input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.switch-slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #334766;
+  border: 1px solid #47628c;
+  transition: .25s;
+  border-radius: 24px;
+}
+
+.switch-slider:before {
+  position: absolute;
+  content: "";
+  height: 18px;
+  width: 18px;
+  left: 3px;
+  bottom: 2px;
+  background-color: #ffffff;
+  transition: .25s;
+  border-radius: 50%;
+}
+
+input:checked + .switch-slider {
+  background-color: #4ade80;
+  border-color: #4ade80;
+}
+
+input:checked + .switch-slider:before {
+  transform: translateX(19px);
+  background-color: #0b111e;
+}
+
+.switch-status {
+  font-size: 11.5px;
+  font-weight: 700;
+  color: #cbd5e1;
+}
+
+/* Card Body */
+.card-body {
+  padding: 18px 20px;
+}
+
+.details-row {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 14px;
+  font-size: 13.5px;
+  background: #233554;
+  padding: 11px 15px;
+  border-radius: 12px;
+  border: 1px solid #38517a;
+}
+
+.detail-item .label {
+  color: #cbd5e1;
+  margin-right: 6px;
+}
+
+.detail-item .value {
+  font-weight: 700;
+  color: #ffffff;
+}
+
+/* Flight Type Badges */
+.flight-type-row {
+  margin-bottom: 14px;
+}
+
+.type-pill {
+  display: inline-block;
+  font-size: 12px;
+  font-weight: 700;
+  padding: 5px 12px;
+  border-radius: 999px;
+}
+
+.type-pill.direct {
+  background: rgba(74, 222, 128, 0.18);
+  color: #86efac;
+  border: 1px solid rgba(74, 222, 128, 0.45);
+}
+
+.type-pill.any {
+  background: #233554;
+  color: #e2e8f0;
+  border: 1px solid #38517a;
+}
+
+.price-box {
+  background: #233554;
+  border-radius: 14px;
+  padding: 15px;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  border: 1px solid #38517a;
+}
+
+.price-col {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.price-divider {
+  width: 1px;
+  height: 40px;
+  background-color: #3d5a87;
+}
+
+.price-label {
+  font-size: 11.5px;
+  text-transform: uppercase;
+  color: #cbd5e1;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  margin-bottom: 4px;
+}
+
+.price-value {
+  font-family: 'Fredoka', sans-serif;
+  font-size: 22px;
+  font-weight: 700;
+}
+
+.price-value.target {
+  color: #86efac;
+}
+
+.price-value.current {
+  color: #ffffff;
+}
+
+.price-value.current.hit-target {
+  color: #4ade80;
+}
+
+.price-value.na {
+  font-size: 13.5px;
+  color: #cbd5e1;
+  font-weight: 600;
+}
+
+.target-alert-pill {
+  margin-top: 12px;
+  background: rgba(74, 222, 128, 0.2);
+  border: 1px solid #4ade80;
+  color: #86efac;
+  padding: 8px 12px;
+  border-radius: 10px;
+  font-size: 13px;
+  font-weight: 700;
+  text-align: center;
+}
+
+.last-collected {
+  margin-top: 12px;
+  font-size: 12px;
+  color: #cbd5e1;
+  text-align: right;
+}
+
+.card-footer {
+  padding: 14px 16px;
+  background: #142036;
+  border-top: 1px solid #2e4366;
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: nowrap;
+}
+
+/* ─── Empty & Loading States ────────────────────────────────────────────── */
+.empty-state {
+  text-align: center;
+  background: #131d31;
+  padding: 54px 24px;
+  border-radius: 22px;
+  border: 2px dashed #293d61;
+}
+
+.empty-icon {
+  font-size: 54px;
+  margin-bottom: 14px;
+}
+
+.empty-state h3 {
+  font-size: 22px;
+  color: #f8fafc;
+  margin-bottom: 8px;
+}
+
+.empty-state p {
+  color: #94a3b8;
+  margin-bottom: 20px;
+}
+
+.loading-state {
+  text-align: center;
+  padding: 56px;
+  color: #cbd5e1;
+}
+
+.spinner {
+  width: 40px;
+  height: 40px;
+  border: 3px solid #223454;
+  border-top-color: #4ade80;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+  margin: 0 auto 14px auto;
+}
+
+.btn-spinner {
+  width: 14px;
+  height: 14px;
+  border: 2px solid #0b111e;
+  border-top-color: transparent;
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+  display: inline-block;
+}

@@ -1,0 +1,115 @@
+<div class="advanced-panel">
+  <div class="advanced-header">
+    <div>
+      <h2>Console de Diagnóstico &amp; Logs do Webscraper</h2>
+      <p class="section-desc" style="margin-bottom: 0;">
+        Acompanhe em tempo real a execução do Playwright Stealth, URLs consultadas no Google Flights, elementos ARIA inspecionados e tarifas extraídas.
+      </p>
+    </div>
+
+    <div class="log-actions-bar">
+      <label class="live-tail-toggle">
+        <input type="checkbox"
+               [ngModel]="autoRefreshLogs()"
+               (ngModelChange)="autoRefreshLogs.set($event)">
+        <span class="live-dot" [class.pulsing]="autoRefreshLogs()"></span>
+        <span>Auto-refresh (3s)</span>
+      </label>
+
+      <button class="btn btn-sm btn-outline" (click)="solicitarAtualizacao.emit()">
+        🔄 Atualizar
+      </button>
+      <button class="btn btn-sm btn-outline" (click)="baixarArquivoLog()" [disabled]="logsFiltrados().length === 0">
+        ⬇️ Baixar .log
+      </button>
+      <button class="btn btn-sm btn-danger-outline" (click)="solicitarLimpeza.emit()" [disabled]="logs().length === 0">
+        🗑️ Limpar Console
+      </button>
+    </div>
+  </div>
+
+  <!-- Barra de Filtros e Resumo -->
+  <div class="log-filters-row">
+    <div class="level-pills">
+      <button type="button"
+              class="level-pill"
+              [class.active]="filtroNivelLog() === 'ALL'"
+              (click)="filtroNivelLog.set('ALL')">
+        Todos ({{ resumoLogs().total }})
+      </button>
+      <button type="button"
+              class="level-pill info"
+              [class.active]="filtroNivelLog() === 'INFO'"
+              (click)="filtroNivelLog.set('INFO')">
+        INFO ({{ resumoLogs().info }})
+      </button>
+      <button type="button"
+              class="level-pill warn"
+              [class.active]="filtroNivelLog() === 'WARNING'"
+              (click)="filtroNivelLog.set('WARNING')">
+        AVISOS ({{ resumoLogs().warn }})
+      </button>
+      <button type="button"
+              class="level-pill err"
+              [class.active]="filtroNivelLog() === 'ERROR'"
+              (click)="filtroNivelLog.set('ERROR')">
+        ERROS ({{ resumoLogs().err }})
+      </button>
+    </div>
+
+    <div class="log-search-controls">
+      <input type="text"
+             [ngModel]="buscaTextoLog()"
+             (ngModelChange)="buscaTextoLog.set($event)"
+             placeholder="🔍 Filtrar logs por texto, trecho ou valor (ex: GRU, R$, ARIA)..."
+             class="form-control log-search-input">
+
+      <button type="button"
+              class="btn btn-sm btn-outline"
+              title="Alternar ordem cronológica"
+              (click)="alternarOrdemCronologica()">
+        {{ ordemMaisRecentePrimeiro() ? '⬇️ Mais recentes no topo' : '⬆️ Mais antigos no topo' }}
+      </button>
+    </div>
+  </div>
+
+  <!-- Terminal Console -->
+  <div class="terminal-window">
+    <div class="terminal-topbar">
+      <div class="terminal-dots">
+        <span class="dot red"></span>
+        <span class="dot yellow"></span>
+        <span class="dot green"></span>
+      </div>
+      <span class="terminal-title">playwright-stealth-scraper — scraper.log ({{ logsFiltrados().length }} linhas exibidas)</span>
+      <span *ngIf="raspagemEmAndamento()" class="terminal-running-badge">
+        ⚡ Raspagem em andamento...
+      </span>
+    </div>
+
+    <div class="terminal-body">
+      <div *ngIf="carregando() && logs().length === 0" class="terminal-empty">
+        Carregando registros do scraper...
+      </div>
+
+      <div *ngIf="!carregando() && logsFiltrados().length === 0" class="terminal-empty">
+        Nenhum registro de log encontrado para os filtros selecionados. Clique em "🔍 Buscar Agora" em um trecho para ver a execução detalhada aqui!
+      </div>
+
+      <div *ngFor="let log of logsFiltrados()" class="log-line" [ngClass]="'log-lvl-' + log.level.toLowerCase()">
+        <span class="log-time">{{ log.timestamp }}</span>
+        <span class="log-badge" [ngClass]="'badge-' + log.level.toLowerCase()">{{ log.level }}</span>
+        <span class="log-source">[{{ log.logger }}]</span>
+        <span class="log-msg">{{ log.message }}</span>
+        <a *ngIf="extrairUrlDoLog(log.message) as url"
+           [href]="url"
+           target="_blank"
+           rel="noopener"
+           class="log-url-link"
+           title="Abrir esta URL do Google Flights">
+          Abrir link ↗
+        </a>
+      </div>
+    </div>
+  </div>
+</div>

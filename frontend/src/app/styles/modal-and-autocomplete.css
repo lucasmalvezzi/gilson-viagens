@@ -1,0 +1,443 @@
+/* ─── Modal (Dark Gilson Style) ─────────────────────────────────────────── */
+.modal-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(6, 10, 18, 0.78);
+  backdrop-filter: blur(5px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 16px;
+}
+
+.modal-dialog {
+  background: #131d31;
+  border-radius: 22px;
+  border: 1px solid #2e456e;
+  max-width: 620px;
+  width: 100%;
+  max-height: 92vh;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.75);
+  overflow: hidden;
+  animation: slideDown 0.2s ease;
+}
+
+.modal-header {
+  padding: 18px 24px;
+  background: #0f1727;
+  border-bottom: 1px solid #243656;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.modal-header h3 {
+  font-size: 19px;
+  font-weight: 700;
+  color: #f8fafc;
+}
+
+.modal-close {
+  background: none;
+  border: none;
+  font-size: 26px;
+  color: #94a3b8;
+  cursor: pointer;
+}
+
+.modal-close:hover {
+  color: #f8fafc;
+}
+
+.modal-body {
+  padding: 24px;
+  overflow-y: auto;
+}
+
+.modal-footer {
+  padding: 16px 24px;
+  background-color: #0f1727;
+  border-top: 1px solid #243656;
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+}
+
+/* Custom Checkbox in Modal */
+.checkbox-group {
+  margin-top: 6px;
+}
+
+.custom-checkbox-label {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+  background-color: #0f1727;
+  padding: 12px 16px;
+  border-radius: 12px;
+  border: 1px solid #263859;
+  transition: all 0.2s ease;
+}
+
+.custom-checkbox-label:hover {
+  background-color: #17243d;
+  border-color: #4ade80;
+}
+
+.custom-checkbox-label input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+  cursor: pointer;
+  accent-color: #4ade80;
+}
+
+.checkbox-text {
+  font-size: 13.5px;
+  color: #f1f5f9;
+}
+
+/* Date Mode Selector */
+.date-mode-selector {
+  margin-bottom: 16px;
+}
+
+.mode-label {
+  display: block;
+  font-size: 13px;
+  font-weight: 700;
+  color: #cbd5e1;
+  margin-bottom: 8px;
+}
+
+.mode-buttons {
+  display: flex;
+  gap: 10px;
+}
+
+.mode-btn {
+  flex: 1;
+  padding: 10px 14px;
+  font-size: 13.5px;
+  font-weight: 700;
+  border-radius: 11px;
+  border: 1px solid #293d61;
+  background-color: #0f1727;
+  color: #94a3b8;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.mode-btn:hover {
+  background-color: #17243d;
+  color: #f8fafc;
+}
+
+.mode-btn.active {
+  background-color: #4ade80;
+  border-color: #4ade80;
+  color: #0b111e;
+}
+
+.custom-range-box {
+  background-color: #0f1727;
+  border: 1px solid #243656;
+  border-radius: 14px;
+  padding: 16px 16px 4px 16px;
+  margin-bottom: 16px;
+}
+
+/* Estimativa de Chamadas Card */
+.estimativa-card {
+  background: rgba(101, 196, 102, 0.1);
+  border: 1px solid rgba(101, 196, 102, 0.35);
+  border-radius: 14px;
+  padding: 15px 18px;
+  margin-top: 14px;
+  transition: all 0.2s ease;
+}
+
+.estimativa-card.warning {
+  background: rgba(251, 191, 36, 0.1);
+  border-color: rgba(251, 191, 36, 0.4);
+}
+
+.estimativa-header {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13.5px;
+  color: #86efac;
+  margin-bottom: 8px;
+}
+
+.estimativa-card.warning .estimativa-header {
+  color: #fde047;
+}
+
+.estimativa-body {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.estimativa-main {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+}
+
+.stat-number {
+  font-family: 'Fredoka', sans-serif;
+  font-size: 28px;
+  font-weight: 700;
+  color: #4ade80;
+}
+
+.estimativa-card.warning .stat-number {
+  color: #fbbf24;
+}
+
+.stat-text {
+  font-size: 13px;
+  font-weight: 600;
+  color: #e2e8f0;
+}
+
+.estimativa-time {
+  font-size: 12.5px;
+  color: #cbd5e1;
+}
+
+.estimativa-samples {
+  font-size: 11.5px;
+  color: #94a3b8;
+  border-top: 1px dashed rgba(255, 255, 255, 0.14);
+  padding-top: 8px;
+  margin-top: 6px;
+}
+
+.samples-title {
+  display: block;
+  margin-bottom: 6px;
+  font-weight: 600;
+  color: #cbd5e1;
+}
+
+.samples-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.sample-tag {
+  background-color: #0d1421;
+  color: #86efac;
+  padding: 3px 9px;
+  border-radius: 6px;
+  border: 1px solid #263859;
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.sample-tag.more {
+  background-color: transparent;
+  border: none;
+  font-weight: 700;
+  color: #4ade80;
+}
+
+.estimativa-alert {
+  margin-top: 10px;
+  font-size: 12px;
+  color: #fde68a;
+  line-height: 1.45;
+  padding: 10px;
+  background-color: rgba(245, 158, 11, 0.16);
+  border: 1px solid rgba(251, 191, 36, 0.3);
+  border-radius: 8px;
+}
+
+/* ─── Airport Autocomplete & City Helper ────────────────────────────────── */
+.airport-selector-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  margin-bottom: 6px;
+}
+
+.airport-autocomplete-wrapper {
+  position: relative;
+  flex: 1;
+}
+
+.input-with-icon {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.input-icon {
+  position: absolute;
+  left: 11px;
+  font-size: 15px;
+  pointer-events: none;
+}
+
+.input-airport {
+  padding-left: 34px;
+  padding-right: 30px;
+  font-weight: 700;
+}
+
+.clear-input-btn {
+  position: absolute;
+  right: 8px;
+  background: none;
+  border: none;
+  color: #94a3b8;
+  font-size: 18px;
+  cursor: pointer;
+  line-height: 1;
+  padding: 2px 4px;
+}
+
+.clear-input-btn:hover {
+  color: #f8fafc;
+}
+
+.swap-btn-container {
+  padding-top: 26px;
+}
+
+.btn-swap-airports {
+  width: 36px;
+  height: 40px;
+  border-radius: 10px;
+  border: 1px solid #2c4168;
+  background: #0d1421;
+  color: #4ade80;
+  font-size: 17px;
+  font-weight: 700;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.15s ease;
+}
+
+.btn-swap-airports:hover {
+  background: #1a2946;
+  border-color: #4ade80;
+  color: #86efac;
+  transform: rotate(180deg);
+}
+
+.airport-selected-hint {
+  margin-top: 6px;
+  font-size: 11.5px;
+  color: #86efac;
+  background: rgba(74, 222, 128, 0.12);
+  border: 1px solid rgba(74, 222, 128, 0.28);
+  padding: 5px 9px;
+  border-radius: 8px;
+  line-height: 1.3;
+}
+
+.airport-dropdown {
+  position: absolute;
+  top: 68px;
+  left: 0;
+  right: 0;
+  background: #0f1727;
+  border: 1px solid #354d77;
+  border-radius: 12px;
+  box-shadow: 0 18px 34px -4px rgba(0, 0, 0, 0.75);
+  max-height: 245px;
+  overflow-y: auto;
+  z-index: 1200;
+}
+
+.dropdown-header-hint {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: #94a3b8;
+  background: #0b111e;
+  padding: 8px 12px;
+  border-bottom: 1px solid #1e2d4a;
+  position: sticky;
+  top: 0;
+}
+
+.airport-option {
+  padding: 9px 12px;
+  border-bottom: 1px solid #17233b;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  transition: background-color 0.12s ease;
+}
+
+.airport-option:hover,
+.airport-option.selected {
+  background-color: #1b2b48;
+}
+
+.airport-option-main {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.airport-iata-pill {
+  background: #25385c;
+  color: #4ade80;
+  font-size: 11px;
+  font-weight: 800;
+  padding: 2px 7px;
+  border-radius: 6px;
+  letter-spacing: 0.04em;
+  min-width: 40px;
+  text-align: center;
+}
+
+.airport-option:hover .airport-iata-pill,
+.airport-option.selected .airport-iata-pill {
+  background: #4ade80;
+  color: #0b111e;
+}
+
+.airport-city-name {
+  font-size: 13px;
+  font-weight: 700;
+  color: #f8fafc;
+}
+
+.airport-city-name small {
+  font-weight: 500;
+  color: #94a3b8;
+}
+
+.airport-sub-name {
+  font-size: 11.5px;
+  color: #8b9bb4;
+  padding-left: 48px;
+}
+
+.airport-empty-option {
+  padding: 10px 12px;
+  font-size: 12px;
+  color: #cbd5e1;
+}

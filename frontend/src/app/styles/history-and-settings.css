@@ -1,0 +1,402 @@
+/* ─── Tables & Grouped History ──────────────────────────────────────────── */
+.historico-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 18px;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.historico-header h3 {
+  font-size: 20px;
+  color: #f8fafc;
+}
+
+.filter-controls {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 13.5px;
+  color: #cbd5e1;
+}
+
+.filter-controls select {
+  padding: 8px 14px;
+  border-radius: 10px;
+  border: 1px solid #2e446b;
+  background: #131d31;
+  color: #f8fafc;
+  font-weight: 600;
+}
+
+.historico-groups-container {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.historico-group-card {
+  background: #131d31;
+  border: 1px solid #263859;
+  border-radius: 18px;
+  overflow: hidden;
+  box-shadow: 0 8px 22px -6px rgba(0, 0, 0, 0.45);
+}
+
+.historico-group-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 22px;
+  background-color: #16233b;
+  border-bottom: 1px solid #243554;
+  cursor: pointer;
+  user-select: none;
+  transition: background 0.15s ease;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.historico-group-header:hover {
+  background: #1c2c4a;
+}
+
+.group-route-info {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.group-route-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.group-iata {
+  font-family: 'Fredoka', sans-serif;
+  font-size: 19px;
+  font-weight: 700;
+  color: #f8fafc;
+}
+
+.group-city {
+  font-size: 13px;
+  font-weight: 600;
+  color: #4ade80;
+}
+
+.group-arrow {
+  font-size: 16px;
+}
+
+.group-meta-badges {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.meta-badge {
+  font-size: 12px;
+  color: #cbd5e1;
+  background: #0e1626;
+  border: 1px solid #293d61;
+  padding: 3px 10px;
+  border-radius: 8px;
+}
+
+.group-stats-right {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+}
+
+.group-stat-box {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  line-height: 1.2;
+}
+
+.group-stat-label {
+  font-size: 10.5px;
+  text-transform: uppercase;
+  font-weight: 700;
+  color: #8b9bb4;
+  letter-spacing: 0.04em;
+}
+
+.group-stat-val {
+  font-family: 'Fredoka', sans-serif;
+  font-size: 15px;
+  font-weight: 700;
+}
+
+.group-stat-val.target {
+  color: #cbd5e1;
+}
+
+.group-stat-val.best {
+  color: #4ade80;
+}
+
+.group-stat-val.best.hit {
+  color: #4ade80;
+}
+
+.group-count-pill {
+  background: rgba(74, 222, 128, 0.14);
+  color: #86efac;
+  border: 1px solid rgba(74, 222, 128, 0.3);
+  font-size: 12px;
+  font-weight: 700;
+  padding: 4px 12px;
+  border-radius: 999px;
+}
+
+.group-chevron {
+  font-size: 12px;
+  color: #94a3b8;
+  width: 18px;
+  text-align: center;
+}
+
+.table-responsive {
+  background: #131d31;
+  border-radius: 14px;
+  border: 1px solid #263859;
+  overflow-x: auto;
+}
+
+.group-table-wrapper {
+  border: none;
+  border-radius: 0;
+}
+
+.data-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+  text-align: left;
+}
+
+.data-table th {
+  background-color: #0f1727;
+  padding: 13px 18px;
+  font-weight: 700;
+  color: #94a3b8;
+  border-bottom: 1px solid #223454;
+  text-transform: uppercase;
+  font-size: 11.5px;
+  letter-spacing: 0.04em;
+}
+
+.data-table td {
+  padding: 14px 18px;
+  border-bottom: 1px solid #1c2b47;
+  color: #e2e8f0;
+}
+
+.data-table tbody tr:hover {
+  background: rgba(56, 182, 255, 0.05);
+}
+
+.price-highlight {
+  font-family: 'Fredoka', sans-serif;
+  font-size: 16px;
+  font-weight: 700;
+  color: #4ade80;
+}
+
+.best-badge {
+  display: inline-block;
+  margin-left: 8px;
+  font-size: 11px;
+  font-weight: 700;
+  background: rgba(101, 196, 102, 0.2);
+  color: #86efac;
+  border: 1px solid rgba(101, 196, 102, 0.4);
+  padding: 2px 8px;
+  border-radius: 999px;
+}
+
+/* ─── Forms & Settings ──────────────────────────────────────────────────── */
+.settings-card {
+  background: #131d31;
+  padding: 30px;
+  border-radius: 20px;
+  border: 1px solid #263859;
+  max-width: 680px;
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.45);
+}
+
+.settings-card h2 {
+  color: #f8fafc;
+  margin-bottom: 8px;
+}
+
+.section-desc {
+  font-size: 14px;
+  color: #94a3b8;
+  margin-bottom: 24px;
+}
+
+.form-group {
+  margin-bottom: 18px;
+}
+
+.form-group label {
+  display: block;
+  font-size: 13px;
+  font-weight: 700;
+  color: #cbd5e1;
+  margin-bottom: 6px;
+}
+
+.form-control {
+  width: 100%;
+  padding: 10px 14px;
+  font-size: 14px;
+  border-radius: 11px;
+  border: 1px solid #2c4168;
+  background: #0d1421;
+  color: #f8fafc;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.form-control::placeholder {
+  color: #64748b;
+}
+
+.form-control:focus {
+  outline: none;
+  border-color: #4ade80;
+  box-shadow: 0 0 0 3px rgba(74, 222, 128, 0.18);
+}
+
+.form-control.uppercase {
+  text-transform: uppercase;
+}
+
+.form-help {
+  display: block;
+  font-size: 12px;
+  color: #8b9bb4;
+  margin-top: 5px;
+}
+
+.form-row {
+  display: flex;
+  gap: 16px;
+}
+
+.col-half {
+  flex: 1;
+}
+
+.col-full {
+  width: 100%;
+}
+
+.settings-actions {
+  display: flex;
+  gap: 12px;
+  margin-top: 24px;
+  flex-wrap: wrap;
+}
+
+.settings-grid-layout {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+  gap: 22px;
+  align-items: start;
+}
+
+.schedule-per-search-box {
+  margin-top: 14px;
+  padding-bottom: 14px;
+}
+
+.schedule-chips-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+
+.schedule-time-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(74, 222, 128, 0.16);
+  border: 1px solid rgba(74, 222, 128, 0.4);
+  color: #86efac;
+  font-family: 'Fredoka', sans-serif;
+  font-size: 13.5px;
+  font-weight: 700;
+  padding: 5px 12px;
+  border-radius: 999px;
+}
+
+.chip-remove-btn {
+  background: none;
+  border: none;
+  color: #fda4af;
+  font-size: 16px;
+  font-weight: 800;
+  cursor: pointer;
+  line-height: 1;
+  padding: 0 2px;
+}
+
+.schedule-add-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 6px;
+}
+
+.schedule-time-input {
+  max-width: 145px;
+}
+
+.win-task-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin: 14px 0;
+  max-height: 220px;
+  overflow-y: auto;
+}
+
+.win-task-item {
+  background: #0d1421;
+  border: 1px solid #293d61;
+  border-radius: 10px;
+  padding: 10px 14px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+  font-size: 12.5px;
+}
+
+.win-task-name {
+  font-family: 'Consolas', monospace;
+  color: #86efac;
+  font-weight: 700;
+}
+
+.win-cmd-box {
+  background: #080d17;
+  border: 1px solid #243656;
+  border-radius: 10px;
+  padding: 10px 12px;
+  font-family: 'Consolas', monospace;
+  font-size: 11.5px;
+  color: #cbd5e1;
+  word-break: break-all;
+  margin-top: 8px;
+}
